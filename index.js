@@ -8,8 +8,6 @@ function getDisplayFromID(id) {
   return displays.getDisplayFromID.call(this, id);
 }
 
-console.log(displays.getPrimaryDisplay())
-
 module.exports = {
   getAllDisplays: displays.getAllDisplays(),
   getPrimaryDisplay: displays.getPrimaryDisplay(),
