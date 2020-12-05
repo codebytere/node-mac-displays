@@ -4,6 +4,7 @@
 
 /***** HELPERS *****/
 
+// Converts a simple C array to a Napi::Array.
 template <typename T> Napi::Array CArrayToNapiArray(Napi::Env env, T *c_arr) {
   Napi::Array arr = Napi::Array::New(env, sizeof c_arr);
 
@@ -14,6 +15,7 @@ template <typename T> Napi::Array CArrayToNapiArray(Napi::Env env, T *c_arr) {
   return arr;
 }
 
+// Converts an NSRect to an object representing bounds.
 Napi::Object NSRectToBoundsObject(Napi::Env env, const NSRect &rect) {
   Napi::Object obj = Napi::Object::New(env);
 
@@ -28,6 +30,8 @@ Napi::Object NSRectToBoundsObject(Napi::Env env, const NSRect &rect) {
   return obj;
 }
 
+// Converts an NSColorSpace to an object containing information about the
+// colorSpace.
 Napi::Object NSColorSpaceToObject(Napi::Env env, NSColorSpace *color_space) {
   Napi::Object obj = Napi::Object::New(env);
 
@@ -73,6 +77,7 @@ Napi::Object BuildDisplay(Napi::Env env, NSScreen *nsscreen) {
 
 /***** EXPORTED FUNCTIONS *****/
 
+// Returns an array of all system displays.
 Napi::Array GetAllDisplays(const Napi::CallbackInfo &info) {
   NSArray<NSScreen *> *nsscreens = [NSScreen screens];
   size_t num_displays = [nsscreens count];
