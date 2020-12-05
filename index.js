@@ -9,7 +9,7 @@ function getDisplayFromID(id) {
 }
 
 module.exports = {
-  getAllDisplays: displays.getAllDisplays(),
-  getPrimaryDisplay: displays.getPrimaryDisplay(),
+  getAllDisplays: displays.getAllDisplays,
+  getPrimaryDisplay: displays.getPrimaryDisplay,
   getDisplayFromID,
 }
