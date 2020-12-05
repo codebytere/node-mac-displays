@@ -6,6 +6,10 @@ This native Node.js module allows you to enumerate over system display informati
 
 ### `Display` Object
 
+The `Display` object represents a physical display connected to the system. A
+fake `Display` may exist on a headless system, or a `Display` may correspond to
+a remote, virtual display.
+
 Display objects take the following format:
 
 * `id` Number - The display's unique identifier.
@@ -14,6 +18,9 @@ Display objects take the following format:
 * `rotation` Number - The screen rotation in clockwise degrees.
 * `scaleFactor` Number - Output device's pixel scale factor.
 * `isMonochrome` Boolean - Whether or not the display is a monochrome display.
+* `colorSpace` Object - Representation of a custom color space.
+  * `name` String - The localized name of the color space.
+  * `componentCount` Number - The number of components, excluding alpha, the color space supports.
 * `depth` Number - The number of bits per pixel.
 * `bounds` Object
   * `x` Number - The x coordinate of the origin of the rectangle.
@@ -33,7 +40,7 @@ Returns `Array<Object>` - Returns an array of display objects.
 
 Example usage:
 ```js
-const allDisplays = contacts.getAllDisplays()
+const allDisplays = displays.getAllDisplays()
 
 console.log(allDisplays[0])
 /* Prints:
@@ -46,6 +53,7 @@ console.log(allDisplays[0])
       264, 516, 520, 528,
       544,   0,   0,   0
     ],
+    colorSpace: { name: 'Color LCD', componentCount: 3 },
     depth: 520,
     scaleFactor: 2,
     bounds: { x: 0, y: 0, width: 1680, height: 1050 },
@@ -63,7 +71,7 @@ Returns `Object` - the display containing the window with the keyboard focus.
 
 Example Usage:
 ```js
-const primary = contacts.getPrimaryDisplay()
+const primary = displays.getPrimaryDisplay()
 
 console.log(primary)
 /* Prints:
@@ -75,6 +83,7 @@ console.log(primary)
     264, 516, 520, 528,
     544,   0,   0,   0
   ],
+  colorSpace: { name: 'Color LCD', componentCount: 3 },
   depth: 520,
   scaleFactor: 2,
   bounds: { x: 0, y: 0, width: 1680, height: 1050 },
@@ -87,13 +96,13 @@ console.log(primary)
 
 ### `displays.getDisplayByID(id)`
 
-* `id` - The device ID for the display.
+* `id` Number - The device ID for the display.
 
 Returns `Object` - the display with the specified device ID.
 
 Example Usage:
 ```js
-const display = contacts.getDisplayByID(2077749241)
+const display = displays.getDisplayByID(2077749241)
 
 console.log(display)
 /* Prints:
@@ -105,6 +114,7 @@ console.log(display)
     264, 516, 520, 528,
     544,   0,   0,   0
   ],
+  colorSpace: { name: 'Color LCD', componentCount: 3 },
   depth: 520,
   scaleFactor: 2,
   bounds: { x: 0, y: 0, width: 1680, height: 1050 },

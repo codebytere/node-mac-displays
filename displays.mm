@@ -28,6 +28,15 @@ Napi::Object NSRectToBoundsObject(Napi::Env env, const NSRect &rect) {
   return obj;
 }
 
+Napi::Object NSColorSpaceToObject(Napi::Env env, NSColorSpace *color_space) {
+  Napi::Object obj = Napi::Object::New(env);
+
+  obj.Set("name", std::string([[color_space localizedName] UTF8String]));
+  obj.Set("componentCount", [color_space numberOfColorComponents]);
+
+  return obj;
+}
+
 // Creates an object containing all properties of an NSScreen.
 Napi::Object BuildDisplay(Napi::Env env, NSScreen *nsscreen) {
   Napi::Object display = Napi::Object::New(env);
@@ -51,6 +60,7 @@ Napi::Object BuildDisplay(Napi::Env env, NSScreen *nsscreen) {
       CArrayToNapiArray(env, [nsscreen supportedWindowDepths]);
   display.Set("supportedWindowDepths", window_depths);
 
+  display.Set("colorSpace", NSColorSpaceToObject(env, [nsscreen colorSpace]));
   display.Set("depth", static_cast<int>([nsscreen depth]));
   display.Set("scaleFactor", [nsscreen backingScaleFactor]);
   display.Set("bounds", NSRectToBoundsObject(env, [nsscreen frame]));
