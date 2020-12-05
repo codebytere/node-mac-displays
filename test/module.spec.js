@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const { getAllDisplays, getPrimaryDisplay, getDisplayFromID } = require('../index')
 
-describe('electron-displays', () => {
+describe('node-system-displays', () => {
   describe('getAllDisplays', () => {
     it('returns an array of Display objects', () => {
       const displays = getAllDisplays()

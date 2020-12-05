@@ -1,4 +1,4 @@
-# electron-displays
+# node-system-displays
 
 This native Node.js module allows you to enumerate over system display information.
 
