@@ -1,11 +1,10 @@
-#include <napi.h>
-#import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
+#include <napi.h>
 
 /***** HELPERS *****/
 
-template <typename T>
-Napi::Array CArrayToNapiArray(Napi::Env env, T *c_arr) {
+template <typename T> Napi::Array CArrayToNapiArray(Napi::Env env, T *c_arr) {
   Napi::Array arr = Napi::Array::New(env, sizeof c_arr);
 
   for (size_t i = 0; i < sizeof c_arr; i++) {
@@ -15,21 +14,22 @@ Napi::Array CArrayToNapiArray(Napi::Env env, T *c_arr) {
   return arr;
 }
 
-Napi::Object NSRectToBoundsObject(Napi::Env env, const NSRect& rect) {
-   Napi::Object obj = Napi::Object::New(env);
+Napi::Object NSRectToBoundsObject(Napi::Env env, const NSRect &rect) {
+  Napi::Object obj = Napi::Object::New(env);
 
-   CGFloat primary_display_height = NSMaxY([[[NSScreen screens] firstObject] frame]);
+  CGFloat primary_display_height =
+      NSMaxY([[[NSScreen screens] firstObject] frame]);
 
-   obj.Set("x", rect.origin.x);
-   obj.Set("y", primary_display_height - rect.origin.y - rect.size.height);
-   obj.Set("width", rect.size.width);
-   obj.Set("height", rect.size.height);
+  obj.Set("x", rect.origin.x);
+  obj.Set("y", primary_display_height - rect.origin.y - rect.size.height);
+  obj.Set("width", rect.size.width);
+  obj.Set("height", rect.size.height);
 
-   return obj;
+  return obj;
 }
 
 // Creates an object containing all properties of an NSScreen.
-Napi::Object BuildDisplay(Napi::Env env, NSScreen* nsscreen) {
+Napi::Object BuildDisplay(Napi::Env env, NSScreen *nsscreen) {
   Napi::Object display = Napi::Object::New(env);
 
   CGDirectDisplayID display_id = [[[nsscreen deviceDescription]
@@ -43,10 +43,12 @@ Napi::Object BuildDisplay(Napi::Env env, NSScreen* nsscreen) {
   CFStringRef app = CFSTR("com.apple.CoreGraphics");
   CFStringRef key = CFSTR("DisplayUseForcedGray");
   Boolean key_valid = false;
-  bool monochrome = CFPreferencesGetAppBooleanValue(key, app, &key_valid) ? true : false;
+  bool monochrome =
+      CFPreferencesGetAppBooleanValue(key, app, &key_valid) ? true : false;
   display.Set("isMonochrome", monochrome);
 
-  Napi::Array window_depths = CArrayToNapiArray(env, [nsscreen supportedWindowDepths]);
+  Napi::Array window_depths =
+      CArrayToNapiArray(env, [nsscreen supportedWindowDepths]);
   display.Set("supportedWindowDepths", window_depths);
 
   display.Set("depth", static_cast<int>([nsscreen depth]));
@@ -62,7 +64,7 @@ Napi::Object BuildDisplay(Napi::Env env, NSScreen* nsscreen) {
 /***** EXPORTED FUNCTIONS *****/
 
 Napi::Array GetAllDisplays(const Napi::CallbackInfo &info) {
-  NSArray<NSScreen*> *nsscreens = [NSScreen screens];
+  NSArray<NSScreen *> *nsscreens = [NSScreen screens];
   size_t num_displays = [nsscreens count];
 
   Napi::Array displays = Napi::Array::New(info.Env(), num_displays);
@@ -83,13 +85,13 @@ Napi::Object GetDisplayFromID(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   uint32_t display_id = info[0].As<Napi::Number>().Uint32Value();
-  NSArray<NSScreen*> *screens = [NSScreen screens];
+  NSArray<NSScreen *> *screens = [NSScreen screens];
 
   size_t num_displays = [screens count];
   for (size_t i = 0; i < num_displays; i++) {
     NSScreen *screen = [screens objectAtIndex:i];
     CGDirectDisplayID s_id = [[[screen deviceDescription]
-      objectForKey:@"NSScreenNumber"] unsignedIntValue];
+        objectForKey:@"NSScreenNumber"] unsignedIntValue];
     if (s_id == display_id) {
       return BuildDisplay(env, screen);
     }
