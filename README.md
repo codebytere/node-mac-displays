@@ -139,9 +139,18 @@ console.log(display)
 */
 ```
 
-### `displays.screenshot(id)`
+### `displays.screenshot(id, options)`
 
 * `id` Number - The device ID for the display.
+* `options` Object
+  * `type` String - The representation of the image. Can be 'jpeg', 'png', or 'tiff'. Defaults to 'jpeg'.
+  * `bounds` Object
+    * `x` Number - The x coordinate of the origin of the rectangle.
+    * `y` Number - The y coordinate of the origin of the rectangle.
+    * `width` Number - The width of the rectangle.
+    * `height` Number - The height of the rectangle.
+
+Returns `Buffer` - a Buffer representation of the desired display screenshot.
 
 Takes a screenshot of the display with the specified id.
 
@@ -154,7 +163,14 @@ const path = require('path')
 const { id } = displays.getPrimaryDisplay()
 
 const ssPath = path.resolve(__dirname, 'screenshot.jpg')
-const screenshotData = display.screenshot(id)
+const screenshotData = displays.screenshot(id, {
+  bounds: {
+    x: 100,
+    y: 500,
+    width: 200,
+    height: 200
+  }
+})
 
 // Write out JPEG image as screenshot.jpg in the current directory.
 fs.writeFileSync(ssPath, screenshotData)

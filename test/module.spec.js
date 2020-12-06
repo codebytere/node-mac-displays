@@ -126,6 +126,37 @@ describe('node-system-displays', () => {
       }).to.throw(`'id' must be a number`)
     })
 
+    it('throws an error if options.type is not valid', () => {
+      expect(() => {
+        const { id } = getPrimaryDisplay()
+        screenshot(id, { type: 'bad-type' })
+      }).to.throw(`'type' must be one of jpeg, tiff, png`)
+    })
+
+    it('throws an error if options.bounds are not valid', () => {
+      const { id } = getPrimaryDisplay()
+
+      expect(() => {
+        screenshot(id, { bounds: 'oh no' })
+      }).to.throw(`'bounds' must be a number`)
+
+      expect(() => {
+        screenshot(id, { bounds: { x: 'bad', y: 1, width: 10, height: 10 } })
+      }).to.throw(`'bounds.x' must be a number`)
+
+      expect(() => {
+        screenshot(id, { bounds: { x: 1, y: 'bad', width: 10, height: 10 } })
+      }).to.throw(`'bounds.y' must be a number`)
+
+      expect(() => {
+        screenshot(id, { bounds: { x: 1, y: 1, width: 'bad', height: 10 } })
+      }).to.throw(`'bounds.width' must be a number`)
+
+      expect(() => {
+        screenshot(id, { bounds: { x: 1, y: 1, width: 10, height: 'bad' } })
+      }).to.throw(`'bounds.height' must be a number`)
+    })
+
     it('can write out a screenshot to the current directory', () => {
       const { id } = getPrimaryDisplay()
 

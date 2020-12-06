@@ -30,6 +30,16 @@ Napi::Object NSRectToBoundsObject(Napi::Env env, const NSRect &rect) {
   return obj;
 }
 
+// Converts a bounds object to an NSRect.
+NSRect BoundsObjectToNSRect(Napi::Object bounds) {
+  int64_t x = bounds.Get("x").As<Napi::Number>().Int64Value();
+  int64_t y = bounds.Get("y").As<Napi::Number>().Int64Value();
+  int64_t width = bounds.Get("width").As<Napi::Number>().Int64Value();
+  int64_t height = bounds.Get("height").As<Napi::Number>().Int64Value();
+
+  return NSMakeRect((CGFloat)x, (CGFloat)y, (CGFloat)width, (CGFloat)height);
+}
+
 // Converts an NSColorSpace to an object containing information about the
 // colorSpace.
 Napi::Object NSColorSpaceToObject(Napi::Env env, NSColorSpace *color_space) {
@@ -113,11 +123,32 @@ Napi::Array GetAllDisplays(const Napi::CallbackInfo &info) {
   return displays;
 }
 
+// Takes a screenshot of the specified display.
 Napi::Buffer<uint8_t> Screenshot(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
-  uint32_t display_id = info[0].As<Napi::Number>().Uint32Value();
 
-  CGImageRef img_ref = CGDisplayCreateImage(display_id);
+  uint32_t display_id = info[0].As<Napi::Number>().Uint32Value();
+  Napi::Object options = info[1].As<Napi::Object>();
+
+  NSBitmapImageFileType image_type = NSBitmapImageFileTypeJPEG;
+  if (options.Has("type")) {
+    std::string type = options.Get("type").As<Napi::String>().Utf8Value();
+    if (type == "png") {
+      image_type = NSBitmapImageFileTypePNG;
+    } else if (type == "tiff") {
+      image_type = NSBitmapImageFileTypeTIFF;
+    }
+  }
+
+  CGImageRef img_ref;
+  if (options.Has("bounds")) {
+    Napi::Object bounds = options.Get("bounds").As<Napi::Object>();
+    CGRect rect = NSRectToCGRect(BoundsObjectToNSRect(bounds));
+    img_ref = CGDisplayCreateImageForRect(display_id, rect);
+  } else {
+    img_ref = CGDisplayCreateImage(display_id);
+  }
+
   if (!img_ref)
     return Napi::Buffer<uint8_t>::New(env, 0);
 
@@ -125,9 +156,8 @@ Napi::Buffer<uint8_t> Screenshot(const Napi::CallbackInfo &info) {
 
   NSBitmapImageRep *bitmap_rep =
       [[NSBitmapImageRep alloc] initWithCGImage:img_ref];
-  NSData *image_data =
-      [bitmap_rep representationUsingType:NSBitmapImageFileTypeJPEG
-                               properties:@{}];
+  NSData *image_data = [bitmap_rep representationUsingType:image_type
+                                                properties:@{}];
   const uint8 *bytes = (uint8 *)[image_data bytes];
   data.assign(bytes, bytes + [image_data length]);
 
