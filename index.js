@@ -8,6 +8,22 @@ function getDisplayFromID(id) {
   return displays.getDisplayFromID.call(this, id)
 }
 
+function mirror(enable, firstID, secondID) {
+  if (typeof enable !== 'boolean') {
+    throw new TypeError(`'enable' must be a boolean`)
+  }
+
+  if (typeof firstID !== 'number') {
+    throw new TypeError(`'firstID' must be a number`)
+  }
+
+  if (secondID && typeof secondID !== 'number') {
+    throw new TypeError(`'secondID' must be a number`)
+  }
+
+  displays.mirror.call(this, enable, firstID, secondID)
+}
+
 function screenshot(id, options = {}) {
   if (typeof id !== 'number') {
     throw new TypeError(`'id' must be a number`)
@@ -16,23 +32,23 @@ function screenshot(id, options = {}) {
   const validTypes = ['jpeg', 'tiff', 'png']
   if (options.type) {
     if (typeof options.type !== 'string') {
-      throw new Error(`'type' must be a string`)
+      throw new TypeError(`'type' must be a string`)
     } else if (!validTypes.includes(options.type)) {
-      throw new Error(`'type' must be one of ${validTypes.join(', ')}`)
+      throw new TypeError(`'type' must be one of ${validTypes.join(', ')}`)
     }
   }
 
   if (options.bounds) {
     if (typeof options.bounds !== 'object') {
-      throw new Error(`'bounds' must be a number`)
+      throw new TypeError(`'bounds' must be a number`)
     } else if (!options.bounds.x || typeof options.bounds.x !== 'number') {
-      throw new Error(`'bounds.x' must be a number`)
+      throw new TypeError(`'bounds.x' must be a number`)
     } else if (!options.bounds.y || typeof options.bounds.y !== 'number') {
-      throw new Error(`'bounds.y' must be a number`)
+      throw new TypeError(`'bounds.y' must be a number`)
     } else if (!options.bounds.width || typeof options.bounds.width !== 'number') {
-      throw new Error(`'bounds.width' must be a number`)
+      throw new TypeError(`'bounds.width' must be a number`)
     } else if (!options.bounds.height || typeof options.bounds.height !== 'number') {
-      throw new Error(`'bounds.height' must be a number`)
+      throw new TypeError(`'bounds.height' must be a number`)
     }
   }
 
@@ -43,5 +59,6 @@ module.exports = {
   getAllDisplays: displays.getAllDisplays,
   getPrimaryDisplay: displays.getPrimaryDisplay,
   getDisplayFromID,
+  mirror,
   screenshot,
 }

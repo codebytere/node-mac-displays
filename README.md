@@ -139,6 +139,23 @@ console.log(display)
 */
 ```
 
+### `displays.mirror(enable, firstID[, secondID])`
+
+* `enable` Boolean - Whether to enable or disable mirroring.
+* `firstID` Number - The device ID for the primary display. If no second display ID is provided, the first
+ display will default to the system's main display and the display corresponding to this ID will be set as the mirroring display.
+* `secondID` Number (optional) - The device ID for the secondary display (which will mirror the first).
+
+Example Usage:
+```js
+const displays = require('node-mac-displays')
+
+const [firstDisplay, secondDisplay] = displays.getAllDisplays()
+
+// Set the second display to mirror the first.
+displays.mirror(true, firstDisplay.id, secondDisplay.id)
+```
+
 ### `displays.screenshot(id, options)`
 
 * `id` Number - The device ID for the display.

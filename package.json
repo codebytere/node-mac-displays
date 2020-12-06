@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A native Node.js module for enumerating over system display information",
   "main": "index.js",
-  "types": "index.d.ts",
   "scripts": {
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean",

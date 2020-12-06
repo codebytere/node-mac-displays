@@ -1,7 +1,13 @@
 const { expect } = require('chai')
 const fs = require('fs')
 const path = require('path')
-const { getAllDisplays, getPrimaryDisplay, getDisplayFromID, screenshot } = require('../index')
+const {
+  getAllDisplays,
+  getPrimaryDisplay,
+  getDisplayFromID,
+  mirror,
+  screenshot,
+} = require('../index')
 
 describe('node-mac-displays', () => {
   describe('getAllDisplays', () => {
@@ -116,6 +122,27 @@ describe('node-mac-displays', () => {
       expect(workArea.y).to.be.a('number')
       expect(workArea.width).to.be.a('number')
       expect(workArea.height).to.be.a('number')
+    })
+  })
+
+  describe('mirror', () => {
+    it('throws an error if enable is not a boolean', () => {
+      expect(() => {
+        mirror('im a string!!')
+      }).to.throw(`'enable' must be a boolean`)
+    })
+
+    it('throws an error if firstID is not valid', () => {
+      expect(() => {
+        mirror(true, 'bad-type')
+      }).to.throw(`'firstID' must be a number`)
+    })
+
+    it('throws an error if options.type is not valid', () => {
+      expect(() => {
+        const { id } = getPrimaryDisplay()
+        mirror(true, id, 'bad-type')
+      }).to.throw(`'secondID' must be a number`)
     })
   })
 
