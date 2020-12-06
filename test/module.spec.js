@@ -1,5 +1,7 @@
 const { expect } = require('chai')
-const { getAllDisplays, getPrimaryDisplay, getDisplayFromID } = require('../index')
+const fs = require('fs')
+const path = require('path')
+const { getAllDisplays, getPrimaryDisplay, getDisplayFromID, screenshot } = require('../index')
 
 describe('node-system-displays', () => {
   describe('getAllDisplays', () => {
@@ -83,7 +85,7 @@ describe('node-system-displays', () => {
     })
 
     it('returns a valid display given an ID', () => {
-      const id = getPrimaryDisplay().id
+      const { id } = getPrimaryDisplay()
 
       const display = getDisplayFromID(id)
 
@@ -114,6 +116,27 @@ describe('node-system-displays', () => {
       expect(workArea.y).to.be.a('number')
       expect(workArea.width).to.be.a('number')
       expect(workArea.height).to.be.a('number')
+    })
+  })
+
+  describe('screenshot', () => {
+    it('throws an error if id is not a number', () => {
+      expect(() => {
+        screenshot('im a string!!')
+      }).to.throw(`'id' must be a number`)
+    })
+
+    it('can write out a screenshot to the current directory', () => {
+      const { id } = getPrimaryDisplay()
+
+      const ssPath = path.resolve(__dirname, 'screenshot.jpg')
+      const screenshotData = screenshot(id)
+
+      fs.writeFileSync(ssPath, screenshotData)
+      expect(fs.existsSync(ssPath)).to.be.true
+
+      fs.unlinkSync(ssPath)
+      expect(fs.existsSync(ssPath)).to.be.false
     })
   })
 })

@@ -41,6 +41,23 @@ Napi::Object NSColorSpaceToObject(Napi::Env env, NSColorSpace *color_space) {
   return obj;
 }
 
+// Returns the NSScreen correspondent to a specified display id.
+NSScreen *ScreenForID(uint32_t display_id) {
+  NSArray<NSScreen *> *screens = [NSScreen screens];
+
+  size_t num_displays = [screens count];
+  for (size_t i = 0; i < num_displays; i++) {
+    NSScreen *screen = [screens objectAtIndex:i];
+    CGDirectDisplayID s_id = [[[screen deviceDescription]
+        objectForKey:@"NSScreenNumber"] unsignedIntValue];
+    if (s_id == display_id) {
+      return screen;
+    }
+  }
+
+  return nullptr;
+}
+
 // Returns whether or not the display is monochrome.
 bool GetIsMonochrome() {
   CFStringRef app = CFSTR("com.apple.CoreGraphics");
@@ -84,15 +101,40 @@ Napi::Object BuildDisplay(Napi::Env env, NSScreen *nsscreen) {
 
 // Returns an array of all system displays.
 Napi::Array GetAllDisplays(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
   NSArray<NSScreen *> *nsscreens = [NSScreen screens];
   size_t num_displays = [nsscreens count];
 
-  Napi::Array displays = Napi::Array::New(info.Env(), num_displays);
+  Napi::Array displays = Napi::Array::New(env, num_displays);
   for (size_t i = 0; i < num_displays; i++) {
-    displays[i] = BuildDisplay(info.Env(), [nsscreens objectAtIndex:i]);
+    displays[i] = BuildDisplay(env, [nsscreens objectAtIndex:i]);
   }
 
   return displays;
+}
+
+Napi::Buffer<uint8_t> Screenshot(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+  uint32_t display_id = info[0].As<Napi::Number>().Uint32Value();
+
+  CGImageRef img_ref = CGDisplayCreateImage(display_id);
+  if (!img_ref)
+    return Napi::Buffer<uint8_t>::New(env, 0);
+
+  std::vector<uint8_t> data;
+
+  NSBitmapImageRep *bitmap_rep =
+      [[NSBitmapImageRep alloc] initWithCGImage:img_ref];
+  NSData *image_data =
+      [bitmap_rep representationUsingType:NSBitmapImageFileTypeJPEG
+                               properties:@{}];
+  const uint8 *bytes = (uint8 *)[image_data bytes];
+  data.assign(bytes, bytes + [image_data length]);
+
+  if (data.empty())
+    return Napi::Buffer<uint8_t>::New(env, 0);
+
+  return Napi::Buffer<uint8_t>::Copy(env, &data[0], data.size());
 }
 
 // Returns the display object containing the window with the keyboard focus.
@@ -102,22 +144,10 @@ Napi::Object GetPrimaryDisplay(const Napi::CallbackInfo &info) {
 
 // Returns the display object with the specified display id.
 Napi::Object GetDisplayFromID(const Napi::CallbackInfo &info) {
-  Napi::Env env = info.Env();
-
   uint32_t display_id = info[0].As<Napi::Number>().Uint32Value();
-  NSArray<NSScreen *> *screens = [NSScreen screens];
+  NSScreen *screen = ScreenForID(display_id);
 
-  size_t num_displays = [screens count];
-  for (size_t i = 0; i < num_displays; i++) {
-    NSScreen *screen = [screens objectAtIndex:i];
-    CGDirectDisplayID s_id = [[[screen deviceDescription]
-        objectForKey:@"NSScreenNumber"] unsignedIntValue];
-    if (s_id == display_id) {
-      return BuildDisplay(env, screen);
-    }
-  }
-
-  return Napi::Object();
+  return screen ? BuildDisplay(info.Env(), screen) : Napi::Object();
 }
 
 // Initializes all functions exposed to JS.
@@ -128,6 +158,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
               Napi::Function::New(env, GetPrimaryDisplay));
   exports.Set(Napi::String::New(env, "getDisplayFromID"),
               Napi::Function::New(env, GetDisplayFromID));
+  exports.Set(Napi::String::New(env, "screenshot"),
+              Napi::Function::New(env, Screenshot));
 
   return exports;
 }

@@ -42,6 +42,8 @@ Returns `Array<Object>` - Returns an array of display objects.
 
 Example usage:
 ```js
+const displays = require('node-system-displays')
+
 const allDisplays = displays.getAllDisplays()
 
 console.log(allDisplays[0])
@@ -75,6 +77,8 @@ Returns `Object` - the display containing the window with the keyboard focus.
 
 Example Usage:
 ```js
+const displays = require('node-system-displays')
+
 const primary = displays.getPrimaryDisplay()
 
 console.log(primary)
@@ -108,6 +112,8 @@ Returns `Object` - the display with the specified device ID.
 
 Example Usage:
 ```js
+const displays = require('node-system-displays')
+
 const display = displays.getDisplayByID(2077749241)
 
 console.log(display)
@@ -131,4 +137,25 @@ console.log(display)
   internal: true
 }
 */
+```
+
+### `displays.screenshot(id)`
+
+* `id` Number - The device ID for the display.
+
+Takes a screenshot of the display with the specified id.
+
+Example Usage:
+```js
+const displays = require('node-system-displays')
+const fs = require('fs')
+const path = require('path')
+
+const { id } = displays.getPrimaryDisplay()
+
+const ssPath = path.resolve(__dirname, 'screenshot.jpg')
+const screenshotData = display.screenshot(id)
+
+// Write out JPEG image as screenshot.jpg in the current directory.
+fs.writeFileSync(ssPath, screenshotData)
 ```
