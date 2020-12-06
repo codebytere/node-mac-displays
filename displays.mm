@@ -175,9 +175,20 @@ Napi::Object GetPrimaryDisplay(const Napi::CallbackInfo &info) {
 // Returns the display object with the specified display id.
 Napi::Object GetDisplayFromID(const Napi::CallbackInfo &info) {
   uint32_t display_id = info[0].As<Napi::Number>().Uint32Value();
-  NSScreen *screen = ScreenForID(display_id);
 
-  return screen ? BuildDisplay(info.Env(), screen) : Napi::Object();
+  NSArray<NSScreen *> *screens = [NSScreen screens];
+
+  size_t num_displays = [screens count];
+  for (size_t i = 0; i < num_displays; i++) {
+    NSScreen *screen = [screens objectAtIndex:i];
+    CGDirectDisplayID s_id = [[[screen deviceDescription]
+        objectForKey:@"NSScreenNumber"] unsignedIntValue];
+    if (s_id == display_id) {
+      return BuildDisplay(info.Env(), screen);
+    }
+  }
+
+  return Napi::Object();
 }
 
 // Initializes all functions exposed to JS.
