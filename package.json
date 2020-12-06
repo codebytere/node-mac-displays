@@ -1,5 +1,5 @@
 {
-  "name": "node-system-displays",
+  "name": "node-mac-displays",
   "version": "1.0.0",
   "description": "A native Node.js module for enumerating over system display information",
   "main": "index.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codebytere/node-system-displays.git"
+    "url": "git+https://github.com/codebytere/node-mac-displays.git"
   },
   "keywords": [
     "nodejs",
@@ -25,9 +25,9 @@
   "author": "Shelley Vohr <shelley.vohr@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/codebytere/node-system-displays/issues"
+    "url": "https://github.com/codebytere/node-mac-displays/issues"
   },
-  "homepage": "https://github.com/codebytere/node-system-displays#readme",
+  "homepage": "https://github.com/codebytere/node-mac-displays#readme",
   "dependencies": {
     "bindings": "^1.5.0",
     "node-addon-api": "^3.0.2"

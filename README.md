@@ -1,4 +1,4 @@
-# node-system-displays
+# node-mac-displays
 
 This native Node.js module allows you to enumerate over system display information.
 
@@ -42,7 +42,7 @@ Returns `Array<Object>` - Returns an array of display objects.
 
 Example usage:
 ```js
-const displays = require('node-system-displays')
+const displays = require('node-mac-displays')
 
 const allDisplays = displays.getAllDisplays()
 
@@ -77,7 +77,7 @@ Returns `Object` - the display containing the window with the keyboard focus.
 
 Example Usage:
 ```js
-const displays = require('node-system-displays')
+const displays = require('node-mac-displays')
 
 const primary = displays.getPrimaryDisplay()
 
@@ -112,7 +112,7 @@ Returns `Object` - the display with the specified device ID.
 
 Example Usage:
 ```js
-const displays = require('node-system-displays')
+const displays = require('node-mac-displays')
 
 const display = displays.getDisplayByID(2077749241)
 
@@ -156,7 +156,7 @@ Takes a screenshot of the display with the specified id.
 
 Example Usage:
 ```js
-const displays = require('node-system-displays')
+const displays = require('node-mac-displays')
 const fs = require('fs')
 const path = require('path')
 

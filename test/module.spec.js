@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const { getAllDisplays, getPrimaryDisplay, getDisplayFromID, screenshot } = require('../index')
 
-describe('node-system-displays', () => {
+describe('node-mac-displays', () => {
   describe('getAllDisplays', () => {
     it('returns an array of Display objects', () => {
       const displays = getAllDisplays()
