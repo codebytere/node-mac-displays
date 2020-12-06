@@ -17,6 +17,8 @@ describe('node-system-displays', () => {
       expect(display).to.have.property('isMonochrome').that.is.a('boolean')
       expect(display).to.have.property('depth').that.is.a('number')
       expect(display).to.have.property('internal').that.is.a('boolean')
+      expect(display).to.have.property('isAsleep').that.is.a('boolean')
+      expect(display).to.have.property('refreshRate').that.is.a('number')
 
       expect(display).to.have.property('colorSpace').that.is.an('object')
       const { name, componentCount } = display.colorSpace

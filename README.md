@@ -33,6 +33,8 @@ Display objects take the following format:
   * `width` Number - The width of the rectangle.
   * `height` Number - The height of the rectangle.
 * `internal` Boolean - `true` for an internal display and `false` for an external display.
+* `isAsleep` Boolean -  Whether or not the display is sleeping.
+* `refreshRate` Number - Returns the refresh rate of the specified display.
 
 ### `displays.getAllDisplays()`
 
@@ -46,13 +48,15 @@ console.log(allDisplays[0])
 /* Prints:
 [
   {
-    id: 2077749241,
+    id: 69734406,
     name: 'Built-in Retina Display',
-    isMonochrome: false,
+    refreshRate: 0,
     supportedWindowDepths: [
       264, 516, 520, 528,
       544,   0,   0,   0
     ],
+    isAsleep: false,
+    isMonochrome: false,
     colorSpace: { name: 'Color LCD', componentCount: 3 },
     depth: 520,
     scaleFactor: 2,
@@ -76,13 +80,15 @@ const primary = displays.getPrimaryDisplay()
 console.log(primary)
 /* Prints:
 {
-  id: 2077749241,
+  id: 69734406,
   name: 'Built-in Retina Display',
-  isMonochrome: false,
+  refreshRate: 0,
   supportedWindowDepths: [
     264, 516, 520, 528,
     544,   0,   0,   0
   ],
+  isAsleep: false,
+  isMonochrome: false,
   colorSpace: { name: 'Color LCD', componentCount: 3 },
   depth: 520,
   scaleFactor: 2,
@@ -107,13 +113,15 @@ const display = displays.getDisplayByID(2077749241)
 console.log(display)
 /* Prints:
 {
-  id: 2077749241,
+  id: 69734406,
   name: 'Built-in Retina Display',
-  isMonochrome: false,
+  refreshRate: 0,
   supportedWindowDepths: [
     264, 516, 520, 528,
     544,   0,   0,   0
   ],
+  isAsleep: false,
+  isMonochrome: false,
   colorSpace: { name: 'Color LCD', componentCount: 3 },
   depth: 520,
   scaleFactor: 2,

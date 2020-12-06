@@ -41,7 +41,16 @@ Napi::Object NSColorSpaceToObject(Napi::Env env, NSColorSpace *color_space) {
   return obj;
 }
 
-// Creates an object containing all properties of an NSScreen.
+// Returns whether or not the display is monochrome.
+bool GetIsMonochrome() {
+  CFStringRef app = CFSTR("com.apple.CoreGraphics");
+  CFStringRef key = CFSTR("DisplayUseForcedGray");
+  Boolean key_valid = false;
+
+  return CFPreferencesGetAppBooleanValue(key, app, &key_valid) ? true : false;
+}
+
+// Creates an object containing all properties of an display.
 Napi::Object BuildDisplay(Napi::Env env, NSScreen *nsscreen) {
   Napi::Object display = Napi::Object::New(env);
 
@@ -53,17 +62,13 @@ Napi::Object BuildDisplay(Napi::Env env, NSScreen *nsscreen) {
     display.Set("name", std::string([[nsscreen localizedName] UTF8String]));
   }
 
-  CFStringRef app = CFSTR("com.apple.CoreGraphics");
-  CFStringRef key = CFSTR("DisplayUseForcedGray");
-  Boolean key_valid = false;
-  bool monochrome =
-      CFPreferencesGetAppBooleanValue(key, app, &key_valid) ? true : false;
-  display.Set("isMonochrome", monochrome);
+  CGDisplayModeRef display_mode = CGDisplayCopyDisplayMode(display_id);
+  display.Set("refreshRate", CGDisplayModeGetRefreshRate(display_mode));
 
-  Napi::Array window_depths =
-      CArrayToNapiArray(env, [nsscreen supportedWindowDepths]);
-  display.Set("supportedWindowDepths", window_depths);
-
+  display.Set("supportedWindowDepths",
+              CArrayToNapiArray(env, [nsscreen supportedWindowDepths]));
+  display.Set("isAsleep", CGDisplayIsAsleep(display_id) ? true : false);
+  display.Set("isMonochrome", GetIsMonochrome());
   display.Set("colorSpace", NSColorSpaceToObject(env, [nsscreen colorSpace]));
   display.Set("depth", static_cast<int>([nsscreen depth]));
   display.Set("scaleFactor", [nsscreen backingScaleFactor]);
