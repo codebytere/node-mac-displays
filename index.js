@@ -17,7 +17,7 @@ function mirror(enable, firstID, secondID) {
     throw new TypeError(`'firstID' must be a number`)
   }
 
-  if (secondID && typeof secondID !== 'number') {
+  if (secondID !== undefined && typeof secondID !== 'number') {
     throw new TypeError(`'secondID' must be a number`)
   }
 
