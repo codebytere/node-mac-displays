@@ -184,6 +184,26 @@ describe('node-mac-displays', () => {
       }).to.throw(`'bounds.height' must be a number`)
     })
 
+    it('throws an error if one of options.bounds is undefined', () => {
+      const { id } = getPrimaryDisplay()
+
+      expect(() => {
+        screenshot(id, { bounds: { y: 1, width: 10, height: 10 } })
+      }).to.throw(`'bounds.x' must be a number`)
+
+      expect(() => {
+        screenshot(id, { bounds: { x: 1, width: 10, height: 10 } })
+      }).to.throw(`'bounds.y' must be a number`)
+
+      expect(() => {
+        screenshot(id, { bounds: { x: 1, y: 1, height: 10 } })
+      }).to.throw(`'bounds.width' must be a number`)
+
+      expect(() => {
+        screenshot(id, { bounds: { x: 1, y: 1, width: 10 } })
+      }).to.throw(`'bounds.height' must be a number`)
+    })
+
     it('can write out a screenshot to the current directory', () => {
       const { id } = getPrimaryDisplay()
 
