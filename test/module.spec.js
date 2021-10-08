@@ -165,7 +165,7 @@ describe('node-mac-displays', () => {
 
       expect(() => {
         screenshot(id, { bounds: 'oh no' })
-      }).to.throw(`'bounds' must be a number`)
+      }).to.throw(`'bounds' must be an object`)
 
       expect(() => {
         screenshot(id, { bounds: { x: 'bad', y: 1, width: 10, height: 10 } })
