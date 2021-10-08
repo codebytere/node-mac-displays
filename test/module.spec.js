@@ -204,6 +204,13 @@ describe('node-mac-displays', () => {
       }).to.throw(`'bounds.height' must be a number`)
     })
 
+    it('can take screenshot if options.bounds are 0', () => {
+      const { id } = getPrimaryDisplay()
+
+      const screenshotData = screenshot(id, { bounds: { x: 0, y: 0, width: 0, height: 0 } })
+      expect(screenshotData).to.be.instanceof(Buffer)
+    })
+
     it('can write out a screenshot to the current directory', () => {
       const { id } = getPrimaryDisplay()
 
