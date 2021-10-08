@@ -40,7 +40,7 @@ function screenshot(id, options = {}) {
 
   if (options.bounds) {
     if (typeof options.bounds !== 'object') {
-      throw new TypeError(`'bounds' must be a object`)
+      throw new TypeError(`'bounds' must be an object`)
     } else if (typeof options.bounds.x !== 'number') {
       throw new TypeError(`'bounds.x' must be a number`)
     } else if (typeof options.bounds.y !== 'number') {
