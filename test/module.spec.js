@@ -165,7 +165,7 @@ describe('node-mac-displays', () => {
 
       expect(() => {
         screenshot(id, { bounds: 'oh no' })
-      }).to.throw(`'bounds' must be a number`)
+      }).to.throw(`'bounds' must be an object`)
 
       expect(() => {
         screenshot(id, { bounds: { x: 'bad', y: 1, width: 10, height: 10 } })
@@ -182,6 +182,33 @@ describe('node-mac-displays', () => {
       expect(() => {
         screenshot(id, { bounds: { x: 1, y: 1, width: 10, height: 'bad' } })
       }).to.throw(`'bounds.height' must be a number`)
+    })
+
+    it('throws an error if one of options.bounds is undefined', () => {
+      const { id } = getPrimaryDisplay()
+
+      expect(() => {
+        screenshot(id, { bounds: { y: 1, width: 10, height: 10 } })
+      }).to.throw(`'bounds.x' must be a number`)
+
+      expect(() => {
+        screenshot(id, { bounds: { x: 1, width: 10, height: 10 } })
+      }).to.throw(`'bounds.y' must be a number`)
+
+      expect(() => {
+        screenshot(id, { bounds: { x: 1, y: 1, height: 10 } })
+      }).to.throw(`'bounds.width' must be a number`)
+
+      expect(() => {
+        screenshot(id, { bounds: { x: 1, y: 1, width: 10 } })
+      }).to.throw(`'bounds.height' must be a number`)
+    })
+
+    it('can take screenshot if options.bounds are 0', () => {
+      const { id } = getPrimaryDisplay()
+
+      const screenshotData = screenshot(id, { bounds: { x: 0, y: 0, width: 0, height: 0 } })
+      expect(screenshotData).to.be.instanceof(Buffer)
     })
 
     it('can write out a screenshot to the current directory', () => {
